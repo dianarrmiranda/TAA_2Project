@@ -1,0 +1,1002 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage[escapeinside=||]{hyperref}
+\hypersetup{ colorlinks=true, citecolor=black, urlcolor=blue, allbordercolors={0 0 0}, pdfborderstyle={/S/U/W 1}}
+\usepackage{colortbl}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{biblatex} 
+\addbibresource{lib.bib}
+\usepackage{subfigure}
+    
+\begin{document}
+
+\title{Intel Image Scene Classification of Landscapes \\
+{\footnotesize Second Assignment for the Machine Learning Topics Course}
+}
+
+\author{\IEEEauthorblockN{José Mendes}
+\IEEEauthorblockA{\textit{DETI} \\
+\textit{University of Aveiro}\\
+NMEC: 107188\\
+Contribution: 50\%}
+\and
+\IEEEauthorblockN{Diana Miranda}
+\IEEEauthorblockA{\textit{DETI} \\
+\textit{University of Aveiro}\\
+NMEC: 107457\\
+Contribution: 50\%}
+}
+
+\maketitle
+
+\begin{abstract}
+
+Over the past decade, image classification has become a critical technology, supporting complex tasks such as medical diagnostics and autonomous robotics. Within this field, scene image classification has gained considerable attention. In this paper, we review the current state of the art in this sub-field and utilize the Intel Image Classification dataset, which contains images of diverse natural scenes from around the globe, to develop four distinct CNN models. These models are designed to accurately identify various types of scenery depicted in images, including buildings, forests, glaciers, mountains, seas, and streets.
+
+\end{abstract}
+
+\begin{IEEEkeywords}
+Intel Image Classification, Image Scene Classification, Machine Learning, Multiclass Classification, Neural Network, Deep Learning, CNN, Convolutional Neural Network
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+Scene image classification is an increasingly vital aspect of computer vision, playing a crucial role in numerous applications, including medical diagnostics, autonomous navigation, environmental monitoring, digital content recommendation, and tourism planning. Unlike basic image classification, which typically involves identifying a limited number of objects within an image, scene classification requires the analysis of complex and varied visual environments.
+
+This paper aims to achieve two primary goals. First, we provide a comprehensive review of the current advancements in scene image classification, analyzing and comparing five relevant studies in this area. Second, we develop, optimize, and evaluate four distinct Convolutional Neural Networks (CNNs) using the Intel Image Classification dataset. This dataset encompasses a wide range of natural scenes from different parts of the world, presenting a challenging multiclass classification problem.
+
+We aim to demonstrate the effectiveness of various machine learning techniques in accurately predicting the type of scenery depicted in images, such as buildings, forests, glaciers, mountains, seas, and streets. The paper concludes with a detailed presentation of our results, comparing them side-by-side along with the insights gained from our experiments.
+
+\section{State of The Art}
+% Search and review of at least 5-6 references (papers, reports, thesis, etc.) handling the same or similar problem. Make a review of different techniques used to solve the problem you want to explore.
+
+A comprehensive state-of-the-art review was performed to find the most suitable models for application to this dataset and identify the type of studies that had already been conducted. The results of these searches present five relevant studies below:
+
+\subsection{Fine-tuned EfficientNet and MobileNetV2 Models for Intel Images Classification}
+
+In the research "Fine-tuned EfficientNet and MobileNetV2 Models for Intel Images Classification" \cite{MobileNet_EfficientNet}, the performance of two deep learning models, MobileNetV2 and EfficientNet, was tested in terms of image sorting in Intel collections \cite{web:dataset:2019}. They were tested at learning rates of 0.01 and 0.09 and MobileNetV2 reached the 50th training session with a great accuracy of 99.67\%, while the best value reached by EfficientNet was 92.11\%, like it's shown in Figure \ref{fig:efficient_mobile}. Generally, the findings from this study underline the importance of the right selection of the model and its settings during fine-tuning to get a good image classification accuracy. Consequently, findings can be transferred to work with other applications connected with object recognition and pattern detection. The study thus emphasizes the importance of careful model selection concerning computational resources, task requirements, and data characteristics, providing a foundation for further advances in deep learning for image labelling.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/stateOfTheArt/efficientVSMobileNetV2.png}
+    \caption{Accuracy of the MobileNetV2 and EfficientNet model for intel image classification \cite{MobileNet_EfficientNet}}
+    \label{fig:efficient_mobile}
+\end{figure}
+
+\subsection{Intel CNN vs VGG16 vs MobileNet}
+
+The study "Intel CNN vs VGG16 vs MobileNet" \cite{web:CNN_VGG16_MobileNet:2024} shows the performance of CNN, VGG16, and MobileNet on the same dataset used by this paper. The study began with a CNN and with 15 epochs, the model reached 76\% accuracy with the validation data (Figure \ref{fig:CNN} Right side). 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\linewidth]{images/stateOfTheArt/CNNLoss1.png}
+    \quad
+    \includegraphics[width=0.45\linewidth]{images/stateOfTheArt/CNNAccuracy1.png}
+    \caption{Comparison between training and validation data: Loss (Left side) and Accuracy (Right side) with CNN Model \cite{web:CNN_VGG16_MobileNet:2024}}
+    \label{fig:CNN}
+\end{figure}
+
+The study then moved on to the VGG16 model, which also trained for 15 epochs and achieved an 86\% accuracy with the validation data (Figure \ref{fig:VGG16} Right side).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\linewidth]{images/stateOfTheArt/VGG16Loss1.png}
+    \quad
+    \includegraphics[width=0.45\linewidth]{images/stateOfTheArt/VGG16Accuracy1.png}
+    \caption{Comparison between training and validation data: Loss (Left side) and Accuracy (Right side) with VGG16 Model \cite{web:CNN_VGG16_MobileNet:2024}}
+    \label{fig:VGG16}
+\end{figure}
+
+Finally, the MobileNet model was tested, and configured similarly to the VGG16 model. It achieved 88\% accuracy on the validation data (Figure \ref{fig:mobileNet} Right side).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\linewidth]{images/stateOfTheArt/MobileNetLoss1.png}
+    \quad
+    \includegraphics[width=0.45\linewidth]{images/stateOfTheArt/MobileNetAccuracy1.png}
+    \caption{Comparison between training and validation data: Loss (Left side) and Accuracy (Right side) with MobileNet Model \cite{web:CNN_VGG16_MobileNet:2024}}
+    \label{fig:mobileNet}
+\end{figure}
+
+Based on the visual representations of the graphs, the study concludes that the CNN model seems to be underfitting. In contrast, VGG16 seems to be doing exceptionally well, and MobileNet is showing signs of overfitting. From all the performance that can be garnered from all three models, VGG16 seems to be the best approach
+
+\subsection{RepConv: A novel architecture for image scene classification on Intel scenes dataset}
+
+This study, "RepConv: A Novel Architecture for Image Scene Classification on the Intel Scenes Dataset" \cite{article:Soudy:2022},  forms a contribution to the problem of image understanding and scene classification by presenting the novel machine learning model RepConv, fast convergence, and efficient performance without data-dependent weights. The RepConv model has been experimentally tested on the Intel scenes dataset and outperformed four benchmark models, achieving 93.55 ± 0.11 for training and 75.54 ± 0.14 for validation data with fewer epochs and parameters. Further, the study has introduced a new binary classification problem through re-categorization of the dataset into natural scenes (forest, glacier, mountain, and sea) and real scenes (building and streets), which has shown unprecedented accuracies of 98.08 ± 0.05 for training and 92.70 ± 0.08 for validation data (Figure \ref{fig:repConv}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/stateOfTheArt/repconv.png}
+    \caption{Training and validation accuracy of the RepConv model. A: Accuracy of natural scenes vs real scenes. B: Accuracy of 6 classes classification (building; forest; glacier; mountain; sea; street). C: Loss of natural scenes vs real scenes. D: Loss of 6 classes classification. \cite{article:Soudy:2022}}
+    \label{fig:repConv}
+\end{figure}
+
+\subsection{Intel Image classification - VGG16 - Val\_Acc: 92.4\%}
+
+The study "Intel Image Classification - VGG16 - Val\_Acc: 92.4\%" \cite{VGG16Tuning} also explores the VGG16 model on the Intel image classification dataset. In the beginning, the model reached 84\% accuracy through data validation. After applying fine-tuning, the accuracy increased up to 92\% (Figure \ref{fig:VGG1692}). The study concludes that even though the model has 92\% accuracy in the validation data, the training and validation accuracy graph shows overfitting, which should be mitigated by increasing the Dropout layer value.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\linewidth]{images/stateOfTheArt/vgg1692Loss.png}
+    \quad
+    \includegraphics[width=0.45\linewidth]{images/stateOfTheArt/vgg1692Acc.png}
+    \caption{Comparison between training and validation data: Loss (Left side) and Accuracy (Right side) \cite{VGG16Tuning}}
+    \label{fig:VGG1692}
+\end{figure}
+
+\subsection{Multi-Class Image Classification using Alexnet Deep Learning Network implemented in Keras API}
+
+In this research, "Multi-Class Image Classification using Alexnet Deep Learning Network implemented in Keras API" \cite{web:IntelAlexNet:2020}, a CNN using the AlexNet architecture is created and tested using the Intel Image Classification dataset. This model was trained using the Adam optimizer and the "categorical\_crossentropy" loss function over 50 epochs. The model obtained a 98.33\% accuracy with the training data and 87.20\% accuracy with the test data. Validation data was not used, and thus, graphs of the evolution in training over the epochs were not provided, but by the accuracy values of the training and test data alone, we can conclude that the model is overfitted since the gap between this two accuracies is big.
+
+In the end, the trained model is tested using some images and the results seem to be as expected for a model with an 87.20\% of accuracy. The author concludes that better and more complex networks such as VGG16, VGG19 and ResNets are worth trying and should give better accuracy than the one obtained in this research.
+
+\section{Intel Image Classification}
+%Describe the problem you want to solve, the features and visualize the data (if it is difficult due to high dimension, show only some samples). Provide some statistical analysis such as metadata (e.g. features range of variation), histograms, try to identify if there are some data quality problems, detect interesting subsets.
+
+\subsection{Data Description}
+
+The Intel Image Classification dataset, which can be found on the Kaggle website, contains around 25k images of size 150x150. These images are divided into six classes: buildings, forest, glacier, mountain, sea, and street \cite{web:dataset:2019} (Figure \ref{fig:trainingData}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/TestImages20.png}
+    \caption{Example of 20 Images from the Training Dataset}
+    \label{fig:trainingData}
+\end{figure}
+
+The folders containing the images are one for the training dataset, with around 14,000 images, the test dataset folder with around 3,000 images, and the prediction folder containing about 7,000 images. The images under the prediction folder do not have any labels (Figure \ref{fig:predictData}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/predictionData.png}
+    \caption{Examples from the Prediction Dataset}
+    \label{fig:predictData}
+\end{figure}
+
+\subsection{Statistical Analysis}
+The data distribution is uniform in both the training and test datasets, meaning each class is equally represented, as confirmed in Figures \ref{fig:numImagesTrain} and \ref{fig:percentTrainAndTest}. This uniformity ensures there is little variance among classes, which is perfect for efficient training of the model without being biased. Consequently, the model learns more effectively, with balanced updates to its parameters, and delivers reliable and fair predictions across all classes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/nImagesTrain.png}
+    \caption{Distribution of Images per Class in the Training Dataset.}
+    \label{fig:numImagesTrain}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/percentTrainAndTest.png}
+    \caption{Distribution of Classes (\%) in Training Dataset (left) and Test Dataset (right).}
+    \label{fig:percentTrainAndTest}
+\end{figure}
+
+
+\subsection{Data Preprocessing} 
+%Se relevante
+
+%Describe possible preprocessing steps to construct the final input to the machine learning algorithm from the initial data, such as data normalization, feature selection or dimensionality reduction in case of redundant features.
+
+For data preprocessing, once the data is uniform across all classes, both in the training and test sets as shown in the previous section, the only necessary preprocessing step is data normalization.
+
+The images are used with pixel values that range between 0 and 255, and this wide range of values can cause issues during model training. Therefore, each value was divided by 255 to fit inside the range between 0 and 1. In this way, training the model will increase its scalability, leading to improved and more stable performance.
+
+\section{Machine Learning Algorithms}
+
+%Apply a suitable ML algorithm (learned in class or self-learned) to solve the problem with the chosen dataset. 
+%Introduce the method shortly, define its parameters. 
+%Make a selection of the most important model hyper parameters after their variation in a selected range. 
+%Show graphically the results of this search
+
+\subsection{CNN}
+
+To address the task of scene image classification, we begin with a straightforward approach by implementing a Simple Convolutional Neural Network (CNN). The Simple CNN model serves as our baseline, providing a foundational understanding of how well basic network architectures can perform on the Intel Image Classification dataset.
+
+We developed three versions of the CNN to explore how variations in network complexity and training parameters affect classification performance. Each version differs in its architecture and hyperparameters, allowing us to systematically evaluate the impact of these changes on the model's ability to classify the different scenes accurately. 
+
+\vspace{2mm}
+
+\subsubsection{Version 1}
+\hfill\\
+
+The first version of our Convolutional Neural Network (CNN) was designed with a straightforward architecture aimed at establishing a baseline performance metric. The model consists of two convolutional layers, each followed by a max-pooling layer, and culminates in a fully connected dense layer before the output layer. The specific architecture is as follows:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/cnn_arch_1.png}
+    \caption{CNN Version 1 Architecture}
+    \label{fig:cnnArch1}
+\end{figure}
+
+The model was compiled using the Adam optimizer with its default learning rate of 0.001. The Adam optimizer is well-suited for this task due to its adaptive learning rate capabilities. The loss function used is "categorical\_crossentropy", which is appropriate for multiclass classification problems, and the performance metric tracked during training was accuracy.
+
+The performance of the CNN Version 1 was evaluated using training, validation, and test datasets. The model demonstrated a high accuracy on the training data but showed a significant drop in accuracy on the validation and test data, indicating potential overfitting.
+
+The model obtained 99.74\% accuracy with the training data, 77.48\% accuracy with the validation data and 76.53\% accuracy with the test data. The discrepancy between the training and validation/test accuracies suggests that while the model can learn well from the training data, it struggles to generalize to unseen data. This is further evidenced by the loss values observed during training and validation.
+
+The Figure \ref{fig:accuracyLossCNN1} graphs illustrate the accuracy and loss for both training and validation data over the 10 epochs:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/acc_loss_cnn_1.png}
+    \caption{Accuracy and Loss of the Training and Validation Data for CNN Version 1}
+    \label{fig:accuracyLossCNN1}
+\end{figure}
+
+These graphs show that while the training accuracy continues to improve and the training loss decreases, the validation accuracy does not improve much since the start of the training and the loss increases, reinforcing the observation of overfitting.
+
+To gain more detailed insights into the model's performance, we generated a classification report and confusion matrix for the validation data. The classification report provides precision, recall, and F1-score for each scene class, while the confusion matrix highlights the specific classes where misclassifications occur most frequently.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/cnn_class_report_1.png}
+    \caption{Classification Report for CNN Version 1}
+    \label{fig:classReportCNN1}
+\end{figure}
+
+As we can see in Figure \ref{fig:classReportCNN1}, the model performs exceptionally well in classifying Forest (1) scenes, with a precision of 0.91, recall of 0.96, and F1-score of 0.93, however, the rest of the scenes do not have such high scores. Glacier (2) and Sea (3) scenes have the lowest precision and recall values, indicating that these categories are more challenging for the model to classify accurately.
+
+Overall accuracy on the validation data is 77\%, with macro and weighted averages for precision, recall, and F1-score all at 0.77, suggesting a balanced performance across different classes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/confusion_matrix_cnn_1.png}
+    \caption{Confusion Matrix for CNN Version 1}
+    \label{fig:confusionMatrixCNN1}
+\end{figure}
+
+Forests (1) are classified very accurately, with the majority of predictions falling in the correct category. Meanwhile, Buildings (0) are often misclassified as Streets (5), with 68 misclassifications, and Streets (5) are sometimes confused with Buildings (0), showing a notable 82 misclassifications, indicating a challenge in distinguishing these two classes. On the same note, Mountains (3) and Glaciers (2) frequently get confused with each other, reflecting their visual similarities (80 mountains as glaciers and 54 glaciers as mountains).
+
+The ROC (Receiver Operating Characteristic) curves for the six scene classes provide an overall view of the model's ability to distinguish between different types of scenery. Each ROC curve plots the true positive rate against the false positive rate, with the Area Under the Curve (AUC) representing the model's performance.
+
+As it can be seen in Figure \ref{fig:rocCurveCNN1}, only class 1 (forest), had a good AUC Value, while the rest of the scenes came short. This emphasises the results obtained with the classification report (Figure \ref{fig:classReportCNN1}) and the confusion matrix (Figure \ref{fig:confusionMatrixCNN1}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]
+    {images/roc_cnn_1.png}
+    \caption{ROC Curve for CNN Version 1}
+    \label{fig:rocCurveCNN1}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison Table of Accuracy on Training, Validation, and Test Set for CNN Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+     99.7\%  & 77.5\%  & 76.5\%\\ \hline
+    \end{tabularx}
+    \label{tab:accMobileNetV2_1}
+\end{table}
+
+\subsubsection{Version 2}
+\hfill\\
+
+The second version of our Convolutional Neural Network (CNN) introduced several enhancements aimed at improving the model's performance and addressing the overfitting observed in Version 1. This version featured a more complex architecture, including additional convolutional layers, batch normalization, and dropout, which collectively help in regularization and improving generalization.
+The architecture of this updated CNN can be seen in Figure \ref{fig:cnnArch2}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]
+    {images/cnn_arch_2.png}
+    \caption{CNN Version 2 Architecture}
+    \label{fig:cnnArch2}
+\end{figure}
+
+In this version, the model consists of three convolutional layers with increasing filter sizes, each followed by a max-pooling layer and batch normalization to stabilize and accelerate the training process. After the convolutional blocks, the model includes a dense layer with 256 units and a dropout layer with a rate of 0.5 to prevent overfitting, followed by the output layer.
+
+The model was compiled using the Adam optimizer with an initial learning rate of 0.001. A learning rate scheduler, ReduceLROnPlateau, was applied to dynamically adjust the learning rate based on the validation loss, thus enabling finer adjustments as training progresses. The loss function used is "categorical\_crossentropy", and the accuracy was the metric tracked during training.
+
+The performance of CNN Version 2 was assessed on training, validation, and test datasets. Significant improvements over Version 1 were observed, particularly in validation and test accuracy, indicating enhanced generalization. The model achieved an accuracy of 99.85\% on the training data, 86.14\% on the validation data, and 84.77\% on the test data. These improvements suggest that enhancements in this version have helped to mitigate the overfitting issue observed in Version 1, although a notable gap between training and validation accuracies remains.
+
+The following graphs (Figure \ref{fig:accuracyLossCNN2}) show the accuracy and loss for both training and validation data over 30 epochs:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]
+    {images/acc_loss_cnn_2.png}
+    \caption{Accuracy and Loss of the Training and Validation Data for CNN Version 2}
+    \label{fig:accuracyLossCNN2}
+\end{figure}
+
+Observing these graphs, we notice that the accuracy and loss values for the validation data exhibit significant variation in the initial epochs, only stabilizing around the 15th epoch. After this, we can see that the values are more closely aligned than in Version 1, suggesting a better fit to the validation data.
+
+To further evaluate the model's performance, a classification report and confusion matrix for the test data were generated.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/cnn_class_report_2.png}
+    \caption{Classification Report for CNN Version 2}
+    \label{fig:classReportCNN2}
+\end{figure}
+
+As shown in Figure \ref{fig:classReportCNN2}, the model improved in classifying every scene compared to Version 1. The precision, recall, and F1-scores values increased for all classes, indicating a more balanced and accurate performance. The first version was already good at predicting the Forest (1) scenes, but now the values have increased even more, indicating that the model is very good at identifying forests. The worst scenes are now Glacier (2) and Mountain (3), with Sea (4) receiving very good scores when compared to the first CNN.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/confusion_matrix_cnn_2.png}
+    \caption{Confusion Matrix for CNN Version 2}
+    \label{fig:confusionMatrixCNN2}
+\end{figure}
+
+The confusion matrix (Figure \ref{fig:confusionMatrixCNN2}) reveals fewer misclassifications compared to Version 1. We can see that Forests (1) are classified very accurately, with 463 out of 500 being classified correctly. However, the model still seems to struggle with distinguishing between Buildings (0) and Streets (5). 63 buildings were misclassified as streets, and a higher number, 50 streets were misclassified as buildings. Similarly, there is still confusion between Mountains (3) and Glaciers (2). Although the same misclassifications occur, the number is slightly lower when compared to version 1.
+
+Finally, ROC curves for each scene were plotted. As shown in Figure \ref{fig:rrocCurveCNN2}, the AUC value for the Forest scene, which was already high, has further improved. The AUC values for the other classes have also increased, with Buildings showing the most significant improvement from 0.93 to 0.98, while Glaciers remain the lowest, but now, at 0.96.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/roc_cnn_2.png}
+    \caption{ROC Curve for CNN Version 2}
+    \label{fig:rrocCurveCNN2}
+\end{figure}
+
+Overall, the enhancements in CNN Version 2 have resulted in a more robust model with improved generalization to unseen data, as evidenced by higher validation and test accuracies and more balanced performance across different scene classes. However, the discrepancy between the training and validation accuracies remains higher than desired.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison Table of Accuracy on Training, Validation, and Test Set for CNN Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+     99.8\%  & 86.1\%  & 84.8\%\\ \hline
+    \end{tabularx}
+    \label{tab:accMobileNetV2_1}
+\end{table}
+
+\vspace{2mm}
+
+\subsubsection{Version 3}
+\hfill\\
+
+The third version of our Convolutional Neural Network (CNN) incorporated additional regularization techniques and data augmentation to further enhance the model's performance and generalization capabilities. This version includes dropout layers within the convolutional blocks, more batch normalization, and data augmentation to increase the robustness of the model against overfitting. The architecture of our final CNN attempt can be seen in Figure \ref{fig:cnnArch3}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/cnn_arch_3.png}
+    \caption{CNN Version 3 Architecture}
+    \label{fig:cnnArch3}
+\end{figure}
+
+In this version, the model comprises three convolutional layers with batch normalization following each layer to normalize the activations and improve stability. Dropout is used after the second convolutional layer to randomly disable a fraction of neurons, preventing co-adaptation and thus reducing overfitting. Max-pooling is applied after each convolutional block to reduce spatial dimensions. A dense layer with 512 units and a dropout rate of 0.3 is added before the output layer.
+
+The model was compiled using the Adam optimizer with a default learning rate of 0.001. A learning rate scheduler, ReduceLROnPlateau, was employed to adjust the learning rate based on the validation accuracy. The loss function used is "categorical\_crossentropy", and the accuracy was the primary metric tracked during training.
+
+Data augmentation was applied using the ImageDataGenerator to generate more diverse training samples through random transformations, including rotations, zooms, and shifts. This further enhances the model's ability to generalize to unseen data and thus, minimize overfitting.
+
+The model achieved an accuracy of 92.86\% on the training data, 86.32\% on the validation data, and 86.27\% on the test data. The closer alignment of training and validation accuracies suggests that the regularization techniques and data augmentation effectively mitigated overfitting.
+
+The following graphs (Figure \ref{fig:accuracyLossCNN3}) show the accuracy and loss for both training and validation data over 30 epochs:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/acc_loss_cnn_3.png}
+    \caption{Accuracy and Loss of the Training and Validation Data for CNN Version 3}
+    \label{fig:accuracyLossCNN3}
+\end{figure}
+
+Comparing Figure \ref{fig:accuracyLossCNN3} with the previous two versions, we observe a much closer alignment of the validation data to the training data over the epochs. This, along with the improved validation accuracy and decreased validation loss, indicates more effective learning and better generalization.
+
+Observing the classification report (Figure \ref{fig:classReportCNN3}) and the confusion matrix (Figure \ref{fig:confusionMatrixCNN3}), it can be seen that although some improvements in the classification report, the values are still pretty similar. On the other hand, by observing the confusion matrix, the number of misclassifications has decreased once more, especially in the classes that were being misclassified by one another (Buildings (0) with Streets (5), and Glaciers (2), with Mountains (3)).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/cnn_class_report_3.png}
+    \caption{Classification Report for CNN Version 3}
+    \label{fig:classReportCNN3}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/confusion_matrix_cnn_3.png}
+    \caption{Confusion Matrix for CNN Version 3}
+    \label{fig:confusionMatrixCNN3}
+\end{figure}
+
+Lastly, to gain further insight, ROC curves for each class were plotted (Figure \ref{fig:rocCurveCNN3}). Similar to Version 2, the AUC values showed minimal improvement. Forests (1) and Streets (5) have very good AUC values, while Glaciers, despite being still the lowest, have improved from 0.96 to 0.97.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.888\linewidth]{images/roc_cnn_3.png}
+    \caption{ROC Curve for CNN Version 3}
+    \label{fig:rocCurveCNN3}
+\end{figure}
+
+Due to the incorporation of batch normalization, dropout, and data augmentation in CNN Version 3, the model has become more robust and has mitigated the overfitting seen in the previous models.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison Table of Accuracy on Training, Validation, and Test Set for CNN Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+     92.9\%  & 86.3\%  & 86.3\%\\ \hline
+    \end{tabularx}
+    \label{tab:accMobileNetV2_1}
+\end{table}
+
+\subsection{AlexNet}
+
+AlexNet revolutionized the field of deep learning and computer vision by winning the ImageNet Large Scale Visual Recognition Challenge (ILSVRC) with a substantial margin. This convolutional neural network (CNN) architecture significantly advanced the performance of neural networks on image classification tasks. AlexNet demonstrated that deep learning models, trained with large datasets and enhanced computational power, could surpass traditional machine learning methods in accuracy and efficiency.
+
+This was the first architecture that used GPU to boost the training performance. AlexNet consists of 5 convolution layers, 3 max-pooling layers, 2 Normalized layers, 2 fully connected layers and 1 SoftMax layer. Each convolution layer consists of a convolution filter and a non-linear activation function called “ReLU” (Figure \ref{fig:archAlexNet}). The pooling layers are used to perform the max-pooling function and the input size is fixed due to the presence of fully connected layers \cite{web:AlexNet:2022}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/alexnet_arch.png}
+    \caption{AlexNet Base Architecture}
+    \label{fig:archAlexNet}
+\end{figure}
+
+\vspace{2mm}
+
+\subsubsection{Version 1 - AlexNet}
+\hfill\\
+
+Firstly, we tried to implement an AlexNet architecture, adapting the original architecture to the intel image classification dataset. To do so we started by defining the architecture of the model (Figure \ref{fig:arch1AlexNet}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/arch1AlexNet.png}
+    \caption{AlexNet Version 1 Architecture}
+    \label{fig:arch1AlexNet}
+\end{figure}
+
+The architecture was implemented following the Base AlexNet Architecture (Figure \ref{fig:archAlexNet}), only changing the input and output layers to adapt to the dataset in use.
+
+The model was compiled using the Adam optimizer with a default learning rate of 0.001. The loss function used is "categorical\_crossentropy", and the accuracy was the primary metric tracked during training.
+
+Figure \ref{fig:accuracyLossAlexNet1} shows the results for the accuracy and loss comparing the performance of both the training set and the validation set obtained during the training of the model.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/acc_loss_alex_1.png}
+    \caption{Accuracy and Loss of the Training and Validation Data for
+    AlexNet Version 1}
+    \label{fig:accuracyLossAlexNet1}
+\end{figure}
+
+The graphs (Figure \ref{fig:accuracyLossAlexNet1}) show that the values of the validation data are very inconsistent, not following the training data as they are supposed to. In complement, the model is slightly overfitted, as can be seen by the noticeable gap between the training and validation accuracy values.
+
+After these observations, a classification report (Figure \ref{fig:classReportAlex}) and confusion matrix (Figure \ref{fig:confusionMatrixAlex}) were built to display the model's performance across the 6 classes.
+
+Here we can see that this model performed worse than the previous one (CNN Version 3), having the same characteristics in terms of the best and worst performing classes. The best being the Forests (1) and the worst being Buildings (0) misclassified with Streets (5) (and vice-versa) and Glaciers (2) misclassified with Mountains (3) (and vice-versa).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/alex_class_report_1.png}
+    \caption{Classification Report for AlexNet Version 1}
+    \label{fig:classReportAlex}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/confusion_matrix_alex.png}
+    \caption{Confusion Matrix for AlexNet Version 1}
+    \label{fig:confusionMatrixAlex}
+\end{figure}
+
+To finalize, ROC curves were plotted for each class, to gain some more insight into the model. Once again the only class with a very good AUC value was the Forest with 0.99, and the worst were the Glaciers and Mountains with a value of 0.94.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/roc_alex_1.png}
+    \caption{ROC Curve for AlexNet Version 1}
+    \label{fig:rocAlex1}
+\end{figure}
+
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison Table of Accuracy on Training, Validation, and Test Set for AlexNet Version 1}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+     97.8\%  & 82.1\%  & 82.0\%\\ \hline
+    \end{tabularx}
+    \label{tab:accMobileNetV2_1}
+\end{table}
+
+\subsubsection{Version 2 - AlexNet with Fine-tuning}
+\hfill\\
+
+In a last effort to obtain satisfying results with the AlexNet CNN Architecture, we decided to add two dropout layers, that randomly drop neurons during training, along with applying data augmentation to some of the images in the training set, which randomly rotates the images with a 10-degree range, randomly zooms and shifts horizontally and vertically, and randomly flips the images horizontally. These additions had the intention of constructing a more robust model and also preventing the overfitting detected in the first version of the AlexNet.
+
+The architecture (Figure \ref{fig:arch2AlexNet}) uses the base AlexNet architecture presented before but now uses the two added dropout layers.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/arch2AlexNet.png}
+    \caption{AlexNet Version 2 Architecture}
+    \label{fig:arch2AlexNet}
+\end{figure}
+
+The model was compiled using the Adam optimizer with
+a learning rate of 0.0001. A learning rate scheduler,
+ReduceLROnPlateau, was employed to adjust the learning rate
+based on the validation accuracy. The loss function used is
+”categorical\_crossentropy”, and the accuracy was the primary
+metric tracked during training.
+Data augmentation was applied using the ImageDataGenerator and it applies the augmentations referred to above.
+
+Figure \ref{fig:accuracyLossAlexNet2} compares the accuracy and loss of the training and validation sets over the 30 epochs.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/acc_loss_alex_2.png}
+    \caption{Accuracy and Loss of the Training and Validation Data for
+    AlexNet Version 2}
+    \label{fig:accuracyLossAlexNet2}
+\end{figure}
+
+As observed in these graphs (Figure \ref{fig:accuracyLossAlexNet2}), the model was able to mitigate the overfitting present in the previous AlexNet model, presenting a small gap between the training and validation accuracy and loss values.
+
+
+To further evaluate the model's performance, we generated a classification report (Figure \ref{fig:classReportAlex2}) and a confusion matrix (Figure \ref{fig:confusionMatrixAlex2}) for the test data.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/alex_class_report_2.png}
+    \caption{Classification Report for AlexNet Version 2}
+    \label{fig:classReportAlex2}
+\end{figure}
+
+As shown in Figure \ref{fig:classReportAlex2}, the model improved in classifying almost every scene compared to Version 1. The precision, recall, and F1-scores values increased for almost all classes, indicating a more balanced and accurate performance. The best values are as expected, in the Forest (1) class, but now also presents good values in the Sea (4) and Street (5) classes. On the other hand, the recall and F1-score values for Glacier (2) are still low, 0.71 and 0.79 respectively, indicating that the model has problems in correctly classifying this class.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/confusion_matrix_alex_2.png}
+    \caption{Confusion Matrix for AlexNet Version 2}
+    \label{fig:confusionMatrixAlex2}
+\end{figure}
+
+The confusion matrix (Figure \ref{fig:confusionMatrixAlex2}) reveals 
+an improvement in almost every class, with an exception. The Glaciers (2) are being misclassified as Mountains (3) more than any previously developed model, indicating once again that the model is having problems correctly classifying  Glaciers.
+
+
+Finally, ROC curves for each scene were also generated. As shown in Figure \ref{fig:rocAlex2}, the AUC values for the Forest, Sea and Street classes are very high, while the AUC values of the Glacier class are the lowest at 0.97, once again proving that this class is not being well interpreted and classified by our model. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/roc_alex_2.png}
+    \caption{ROC Curve for CNN Version 2}
+    \label{fig:rocAlex2}
+\end{figure}
+
+
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison Table of Accuracy on Training, Validation, and Test Set for AlexNet Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+     92.0\%  & 85.8\%  & 85.9\%\\ \hline
+    \end{tabularx}
+    \label{tab:accMobileNetV2_1}
+\end{table}
+
+\subsection{MobileNet V2}
+
+MobileNet v2 is a neural network architecture for computer vision, mainly image classification, on devices with limited resources. It employs an inverted residual block structure together with depthwise convolutions (Figure \ref{fig:mobileNetV2CB}) \cite{web:MobileNetV2:2019}. These significantly enhance computational efficiency and reduce the number of required calculations while maintaining good accuracy. This makes it an efficient and powerful model for image classification by joining architecture optimized for efficiency with good performance regarding precision.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{images/mobileNetV2Architecture.png}
+    \caption{MobileNetV2 Convolutional Blocks}
+    \label{fig:mobileNetV2CB}
+\end{figure}
+
+\subsubsection{Version 1 - Model Based MobileNetV2 with Frozen Convolutional Layers}
+\hfill\\
+
+Initial work on MobileNetV2 used a pre-trained model where all convolutional layers were frozen, making only the final layers trainable. This would allow for faster adaptation to this new dataset while keeping most of the features learned from the previous dataset.
+
+Therefore, pre-trained convolutional layers, global pooling, and a dense output layer with softmax activation are used in the model architecture to provide multi-class classification into 6 classes (Figure \ref{fig:arch1MobileNetV2}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/arch1MobileNetV2.png}
+    \caption{MobileNetV2 Version 1 Architecture}
+    \label{fig:arch1MobileNetV2}
+\end{figure}
+
+The model was compiled with the RMSprop optimizer using its default hyperparameters and the "categorical\_crossentropy" loss function, which is suitable for multiclass classification problems. It was then trained for 15 epochs using a training set of 11,227 examples, and its performance was monitored with a validation set of 2,807 examples to track how well it performed on unseen data.
+
+Figure \ref{fig:Acc&LossMobileNetV2_1} shows the results for accuracy and loss comparing the performance on the training set with the validation set obtained during the training of this model. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/accAndLossMobileNetV2_1.png}
+    \caption{Accuracy and Loss of the Training and Validation Data for MobileNetV2 Version 1}
+    \label{fig:Acc&LossMobileNetV2_1}
+\end{figure}
+
+These graphs (Figure \ref{fig:Acc&LossMobileNetV2_1}) show that the model was slightly overfitted, as there was a visible gap between the training accuracy and loss values in comparison with validation accuracy and loss values.
+
+The classification report (Figure \ref{fig:crMobileNetV2_1}) and confusion matrix (Figure \ref{fig:cmMobileNetV2_1})were generated using the test data. From these results, it can be clearly seen that model performance for classes 2 and 3 (glacier and mountain) is not as good, returning relatively lower values in terms of precision, recall, and the F1-score compared to what was obtained for other classes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/classReportMobileNetV2_1.png}
+    \caption{Classification Report for MobileNetV2 Version 1}
+    \label{fig:crMobileNetV2_1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/confMatrixMobileNetV2_1.png}
+    \caption{Confusion Matrix for MobileNetV2 Version 1}
+    \label{fig:cmMobileNetV2_1}
+\end{figure}
+
+To gain further insight into the model, ROC curves were plotted. Since it is a multi-class classification, each class can be taken as the positive class against all other remaining classes. Thereby, a ROC curve for each class can be constructed showing how well the model is at distinguishing that class from others. As it can be seen in Figure \ref{fig:RocCurvesMobileNetV2_1}, classes 0, 1, 4, and 5 had very good AUC values, while 2 and 3 were poorer, which comes in line with the classification report and confusion matrix results.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/rocCurvesMobileNetV2_1.png}
+    \caption{ROC Curve for each Class for MobileNetV2 Version 1}
+    \label{fig:RocCurvesMobileNetV2_1}
+\end{figure}
+
+Finally, the accuracy obtained for the training data, validation data, and test data were compared. Table \ref{tab:accMobileNetV2_1} shows the values obtained for each one.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison Table of Accuracy on Training, Validation, and Test Set for MobileNetV2 Version 1}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+     94.9\%  & 88.7\%  & 87.9\%\\ \hline
+    \end{tabularx}
+    \label{tab:accMobileNetV2_1}
+\end{table}
+
+
+\subsubsection{Version 2 - Trainable MobileNetV2 Model with Additional Layers and Hyperparameter Tunnig}
+\hfill\\
+
+The results with the initial version of MobileNetV2 turned out not to be the best due to overfitting, so another approach was taken. Hyperparameter tuning was conducted to find the best optimizer, learning rate, momentum, and weight decay for the MobileNetV2 model. Also, retraining of the model took place with the addition of extra layers.
+
+The base MobileNetV2 model was then set to trainable, after which a Global Average Pooling layer was added to reduce the feature map spatial dimensions. Two dense layers were then added with neurons 1024 and 512, both of which significantly improved the learning capacity of the model. In addition, two dropout layers are added to prevent the overfitting process by randomly dropping neurons during training. And, finally, a densely connected output layer with 6 neurons and softmax activation has been added for classification into 6 categories. (Figure \ref{fig:archMobileNetV2_2})
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/archMobileNetV2_2.png}
+    \caption{MobileNetV2 Version 2 Architecture}
+    \label{fig:archMobileNetV2_2}
+\end{figure}
+
+This was followed by Bayesian Optimization-based hyperparameter tuning. Bayesian Optimization is a form of Bayesian inference that requires the construction of a probabilistic model for the objective function. This probabilistic model decides which point to explore next to find the best combination of hyperparameters. Twelve different trials were done, varying the values of the hyperparameters within a specified range, as shown in Table \ref{tab:hyperparametersMobileNetV2}.
+
+\begin{table}[H]
+    \centering
+    \caption{Hyperparameter Settings for Bayesian Optimization for MobileNetV2 Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Hyperparameter} & \cellcolor[HTML]{EFEFEF}\textbf{Values Range} \\ \hline
+     Learning Rate  &  1e-4 - 1e-2\\ \hline
+     Optimizer  &  Adam, RMSprop or SGD\\ \hline
+     Momentum  &  0.0 - 0.99\\ \hline
+     Weight Decay  &  0 - 0.01\\ \hline
+    \end{tabularx}
+    \label{tab:hyperparametersMobileNetV2}
+\end{table}
+
+With this hyperparameter tuning, the best hyperparameters obtained are shown in Table \ref{tab:resultsHyperparametersMobileNetV2}.
+
+\begin{table}[H]
+    \centering
+    \caption{Best Hyperparameters Obtained from Hyperparameter Tuning for MobileNetV2 Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{1\linewidth}{|X|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Learning Rate} & \cellcolor[HTML]{EFEFEF}\textbf{Optimizer} & \cellcolor[HTML]{EFEFEF}\textbf{Momentum} & \cellcolor[HTML]{EFEFEF}\textbf{Weight Decay} \\ \hline
+     0.00053  & SGD  & 0.63080 & 0.00899 \\ \hline
+    \end{tabularx}
+    \label{tab:resultsHyperparametersMobileNetV2}
+\end{table}
+
+Then, the model was compiled with the best hyperparameters, and training was conducted using 15 epochs.
+
+Figure \ref{fig:acc&LossMobileNetV2} shows the results for accuracy and loss comparing the performance on the training set with the validation set obtained during the training of this model.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/acc&LossMobileNetV2_2.png}
+    \caption{Accuracy and Loss of the Training and Validation Data for MobileNetV2 Version 2}
+    \label{fig:acc&LossMobileNetV2}
+\end{figure}
+
+These graphs (Figure \ref{fig:acc&LossMobileNetV2}) correspond to a well-fitted model for the data, unlike what happened in the first version of MobileNetV2. There is no tendency for this model to overfit or underfit since accuracy and loss values are very similar between the training and validation datasets.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/classRepMobileNetV2_2.png}
+    \caption{Classification Report for MobileNetV2 Version 2}
+    \label{fig:classRepMobileNetV2_2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/confMatrixMobileNetV2_2.png}
+    \caption{Confusion Matrix for MobileNetV2 Version 2}
+    \label{fig:confMatrixMobileNetV2_2}
+\end{figure}
+
+ The classification report (Figure \ref{fig:classRepMobileNetV2_2}) and confusion matrix (Figure \ref{fig:confMatrixMobileNetV2_2}) were generated using the test data. From the analysis of these results, it is evident that the model has improved in all classes compared to what was obtained in version one. This model still performed poorer in classes 2 and 3, although the difference from other classes is not as big as in the first version.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/rocMobileNetV2_2.png}
+    \caption{ROC Curve for each Class for MobileNetV2 Version 1}
+    \label{fig:rocMobileNetV2_2}
+\end{figure}
+
+ROC Curve (Figure \ref{fig:rocMobileNetV2_2}) analysis was also conducted for this model, which confirms all previous analyses. The AUC obtained for classes 0, 1, 4, and 5 was 1, indicating that the model can perfectly distinguish each of these classes compared to all others. For classes 2 and 3, this value equalled 0.98, meaning not perfect like 1, but still a very reasonable value.
+
+Finally, the accuracy obtained for the training data, validation data, and test data were compared. Table \ref{tab:accMobileNetV2_2} shows the values obtained for each one.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison Table of Accuracy on Training, Validation, and Test Set for MobileNetV2 Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+     97.6\%  & 92.5\%  & 91.7\%\\ \hline
+    \end{tabularx}
+    \label{tab:accMobileNetV2_2}
+\end{table}
+
+\subsection{VGG16}
+
+VGG-16 is a deep CNN model composed of 16 layers, where there are 13 convolutional layers and 3 fully connected layers. Its simplicity makes it very effective and able to attain very good results in most of the fundamental vision tasks like image classification and object recognition \cite{web:VGG16:2024}. This model architecture (Figure \ref{fig:VGG16Arch}) is characterized by convolutional layers followed by max-pooling layers, which successively increase in depth. Such architecture will let the model learn complex and hierarchical representations of visual features and, hence, lead to accurate and robust predictions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/archVgg16.png}
+    \caption{VGG16 Architecture}
+    \label{fig:VGG16Arch}
+\end{figure}
+
+\subsubsection{Version 1 - Transfer Learning with VGG16}
+\hfill\\
+
+The first technique that was used for the study of the VGG16 model was Transfer Learning, an advanced deep learning technique that utilizes a pre-trained model, VGG16, as a starting point for new learning tasks. This allows the use of features the model has learned on ImageNet and fine-tuning it on much smaller datasets for specific tasks. Here, the layers of VGG16 have been set as non-trainable to preserve the weights it had learnt. Added a Flatten layer on top of VGG16, followed by a dense layer with 'softmax' activation to classify into 6 categories (Figure \ref{fig:archVGG16_1}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]{images/archVGG16_1.png}
+    \caption{VGG16 Version 1 Architecture}
+    \label{fig:archVGG16_1}
+\end{figure}
+
+Next, the model was compiled with categorical cross-entropy as the loss, Adam as the optimizer, and accuracy as the main metric to evaluate the model's performance. This configuration was chosen because it is commonly used in multi-class classification problems, balancing training efficiency with prediction accuracy.
+
+After that, the model was trained for 15 epochs, obtaining the accuracy and loss values on the training and validation sets as shown in Figure \ref{fig:acc&lossVGG16_1}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/acc&lossVGG16_1.png}
+    \caption{Accuracy and Loss of the Training and Validation Data for VGG16 Version 1}
+    \label{fig:acc&lossVGG16_1}
+\end{figure}
+
+The graphs of accuracy and loss values of the training data and validation data (Figure \ref{fig:acc&lossVGG16_1}) prove this model is not ideal. On checking Model Accuracy, it was noticed that there was overfitting because the model accuracy reached 99\% on the training data and remained at 87\% for the validation data, which is quite a big difference between the training set accuracy and the test accuracy. Also for the loss, it has very different values between the training and validation dataset and for this latter, it tends to increase which isn't good.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/classReportVGG16_1.png}
+    \caption{Classification Report for VGG16 Version 1}
+    \label{fig:classReportVGG16_1}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/confMatrixVGG16_1.png}
+    \caption{Confusion Matrix for VGG16 Version 1}
+    \label{fig:confMatrixVGG16_1}
+\end{figure}
+
+The classification report (Figure \ref{fig:classReportVGG16_1}) and confusion matrix (Figure \ref{fig:confMatrixVGG16_1}) show the model performed fairly well in evaluating the classes with the test data. However, class 3 has low precision compared to other classes. Also, there is a low recall for class 2 and low F1 scores for classes 2 and 3.
+
+The ROC curves (Figure \ref{fig:rocCurvesVGG16_1}) once again demonstrate the accuracy of the results from other performance metrics, showing a low AUC for classes 2 and 3 and a perfect AUC for class 1.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/rocCurvesVGG16_1.png}
+    \caption{ROC Curve for each Class for VGG16 Version 1}
+    \label{fig:rocCurvesVGG16_1}
+\end{figure}
+
+Finally, the accuracy obtained for the training data, validation data, and test data were compared. Table \ref{tab:accVGG16_1} shows the values obtained for each one.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison Table of Accuracy on Training, Validation, and Test Set for VGG16 Version 1}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+     98.9\%  & 87.9\%  & 87.5\%\\ \hline
+    \end{tabularx}
+    \label{tab:accVGG16_1}
+\end{table}
+
+\subsubsection{Version 2 - Fine-tuning VGG16 and Hyperparameter Tuning for Classification}
+\hfill\\
+
+To combat the overfitting observed in version 1, a fine-tuning approach was adopted. This process involves adjusting a pre-trained model, VGG16, for a specific task by modifying its final layers or adding new layers to tailor the model to the needs of the new task. Moreover, hyperparameter tuning was performed in search of the best values of these hyperparameters.
+
+First, the pre-trained VGG16 model is loaded, and its last layer is removed to adapt it to a new classification task. Then, a new sequential model is created with the output of VGG16 connected to a Flatten layer to prepare the data. Next, it adds a dense layer with 250 neurons and ReLU activation, followed by Dropout to reduce overfitting. Finally, classification into the six classes involved a dense layer with 6 neurons accompanied by a softmax activation function. The strategy followed in this training was that all layers in VGG16 at the start of training were non-trainable except block5\_conv1, the first convolutional layer, which would adjust itself to learn special features of the new task. (Figure \ref{fig:archVGG16_2}) 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/archVGG16_2.png}
+    \caption{VGG16 Version 2 Architecture}
+    \label{fig:archVGG16_2}
+\end{figure}
+
+After that, Bayesian Optimization-based methods were applied for hyperparameter tuning. Eight trials have been made while varying the values within the intervals defined for every hyperparameter shown in Table \ref{tab:hyperparametersVGG16tV2}.
+
+\begin{table}[H]
+    \centering
+    \caption{Hyperparameter Settings for Bayesian Optimization for VGG16 Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Hyperparameter} & \cellcolor[HTML]{EFEFEF}\textbf{Values Range} \\ \hline
+     Learning Rate  &  1e-4 - 1e-2\\ \hline
+     Optimizer  &  Adam, Adagrad or Nadam\\ \hline
+    \end{tabularx}
+    \label{tab:hyperparametersVGG16tV2}
+\end{table}
+
+With this hyperparameter tuning, the best hyperparameters obtained are shown in Table \ref{tab:resultsHyperparametersVGG16}.
+
+\begin{table}[H]
+    \centering
+    \caption{Best Hyperparameters Obtained from Hyperparameter Tuning for VGG16 Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Learning Rate} & \cellcolor[HTML]{EFEFEF}\textbf{Optimizer}\\ \hline
+     0.0001  & Adam \\ \hline
+    \end{tabularx}
+    \label{tab:resultsHyperparametersVGG16}
+\end{table}
+
+The model was then compiled with these values for the hyperparameters, and following that, was trained for 15 epochs.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/acc&lossVGG16_2.png}
+    \caption{Accuracy and Loss of the Training and Validation Data for VGG16 Version 2}
+    \label{fig:acc&lossVGG16_2}
+\end{figure}
+
+Comparing the accuracy and loss graphs of the training and validation data (Figure \ref{fig:acc&lossVGG16_2}) obtained with this model to those obtained in the first version studied, these results show improvements. The training data accuracy has been maintained at 99\%, while the validation data accuracy has increased from 87\% to 92\%. In relation to loss, improvements are also observed, achieving a lower loss on the validation data compared to the first version, however, there is still a tendency for this loss to increase
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/classReportVGG16_2.png}
+    \caption{Classification Report for VGG16 Version 2}
+    \label{fig:classReportVGG16_2}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{images/confMatrixVGG16_2.png}
+    \caption{Confusion Matrix for VGG16 Version 2}
+    \label{fig:confMatrixVGG16_2}
+\end{figure}
+
+Analyzing the classification report (Figure \ref{fig:classReportVGG16_2}) and confusion matrix (Figure \ref{fig:confMatrixVGG16_2}) obtained from the test data, it is evident that there has been an improvement in the performance of classifying all classes compared to the results obtained in the previous study of the VGG16 model. At this point, none of the parameters have a score below 85\%.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\linewidth]{images/rocCurvesVGG16_2.png}
+    \caption{ROC Curve for each Class for VGG16 Version 2}
+    \label{fig:rocCurvesVGG16_2}
+\end{figure}
+
+The ROC curves (Figure \ref{fig:rocCurvesVGG16_2}) show that this model can almost perfectly distinguish each class when compared to all others.
+
+Finally, the accuracy obtained for the training data, validation data, and test data were compared. Table \ref{tab:accVGG16_2} shows the values obtained for each one.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison Table of Accuracy on Training, Validation, and Test Set for VGG16 Version 2}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{0.8\linewidth}{|X|X|X|}
+    \hline
+    \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+     99.6\%  & 92\%  & 92.5\%\\ \hline
+    \end{tabularx}
+    \label{tab:accVGG16_2}
+\end{table}
+
+\section{Results}
+
+This section presents the results in terms of the accuracy of the different models previously studied, over the training, validation, and test datasets. All these models are explained in more detail in Section IV: Machine Learning Algorithms.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparison of Models Accuracy on Training, Validation, and Test Data}
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabularx}{1\linewidth}{|
+    >{\columncolor[HTML]{EFEFEF}}p{3cm} |X|X|X|}
+    \hline
+    \textbf{Models} & \cellcolor[HTML]{EFEFEF}\textbf{Train Set} & \cellcolor[HTML]{EFEFEF}\textbf{Validation Set} & \cellcolor[HTML]{EFEFEF}\textbf{Test Set} \\ \hline
+    CNN Version 1 & 99.7\%  & 77.5\%  & 76.5\%\\ \hline
+    CNN Version 2 & 99.8\%  & 86.1\%  & 84.8\%  \\ \hline
+    CNN Version 3 & 92.9\%  & 86.3\%  & 86.3\%  \\ \hline
+    AlexNet Version 1 & 97.8\%  & 82.1\%  & 82\%  \\ \hline
+    AlexNet Version 2 & 92\% & 85.8\% & 85.9\%  \\ \hline
+    MobileNetV2 Version 1 & 94.9\% & 88.7\% & 87.9\%  \\ \hline
+    MobileNetV2 Version 2  & 97.6\% & 92.5\% & 91.7\% \\ \hline
+    VGG16 Version 1 & 98.9\% & 87.9\% & 87.5\% \\ \hline
+    VGG16 Version 2 & 99.6\% & 92\% & 92.5\% \\ \hline
+    \end{tabularx}
+    \label{tab:finalResults}
+\end{table}
+
+It can be seen from Table \ref{tab:finalResults} that the accuracy varied across models in the training, validation, and test sets. And most of the models indicate possible overfitting. For instance, CNN Version 1 and 2 had the highest accuracy on the training set, which is 99.7\% and 99.8\%, but it drastically drops at validation and the test sets.
+
+Comparing these results with previous state-of-the-art studies, the previous study on MobileNet indicates that it attained an accuracy of 99\% for a learning rate of 0.01 and 94\% at a learning rate of 0.09 on the training set. Our study on MobileNetV2 Version 2 attained an accuracy of 97.6\% on the training set and 92.5\% on the validation set. The previous study did not provide validation data results, so a direct comparison is not possible.
+
+One of the previous studies reported achieving an accuracy of 86\% on validation data, another reached 92.4\%. In our studies, VGG16 Version 1 has reached an accuracy of 88.7\%, while Version 2 has reached an accuracy of 92\% on the validation data. Results on the loss were identical to previous studies and ours.
+
+Relatively to the AlexNet research presented, it obtained an accuracy of 98.33\% on the training data and 87.20\% on the test data, it did not use validation data and thus a direct comparison is not possible. The models that we developed were not able to achieve a higher test accuracy than this with 82.1\% for Version 1 and 85.8\% for Version 2, but the overfitting present in the research was mitigated in the AlexNet Version 2 that uses two Dropout layers and data augmentation.
+
+For CNN, the previous study achieved only 76\% accuracy on the validation data, while our three versions of CNN achieved better accuracy than that, with the best being the third version with 86.3\% accuracy.
+
+Overall, our studies on these models achieved better results and performance than the state-of-the-art studies reviewed.
+
+To conclude, our top-performing model, MobileNetV2 Version 2, confirms the literature specifying how well this architecture does its job concerning image classification. Moreover, fine-tuning and adjusting hyperparameters resulted in improved accuracy across all models. These findings suggest that while the deeper AlextNet, VGG16 and MobileNetV2 often benefit from fine-tuning, the simpler models, in this case, baseline CNNs, are faced with challenges of overfitting.
+
+\section{Conclusions}
+
+%Critical discussion of the gained knowledge regarding the advantages/disadvantages of the applied methods on the problem in hand. Suggestions for potential future directions of study.
+
+\subsection{Discussion}
+
+This project provided several valuable insights into various machine learning model performances on the task of image classification. The comparative analysis performed using AlexNet, MobileNetV2, VGG16, and baseline CNNs indicates the dissimilarities in accuracy and robustness on different datasets.
+
+AlexNet was a performance breakthrough in image classification with deep convolutional layers. In this work, version 1 of AlexNet achieved about 97.8\% accuracy on the training set. However, it exhibited lower performance on the validation and test sets, suggesting potential issues with generalization. Then, fine-tuning was applied to address these challenges, resulting in a slight improvement in generalization.
+
+The architecture of MobileNetV2 is quite light, efficient, and most appropriate to be run on anything from mobile and embedded devices. For our work, an enhanced version of MobileNetV2 with more layers and the hyperparameters optimized, revealed surprising improvements where the accuracy improved at 97.6\% in the training set and 92.5\% in the validation set, thus proving robustness across changing computational constraints.
+
+VGG16 is a very deep network and offers excellent feature extraction capabilities, making it the base for most computer vision applications. Our experiments with VGG16 Version 1 and Version 2 did involve finetuning and changes in hyperparameters with notable increases in accuracy.
+
+In contrast to predefined deeper models like VGG16 and MobileNetV2, baseline simple CNNs showed competitive performance in some cases. However, we noticed that baseline CNNs could suffer from overfitting, posting very high training accuracy but low validation and test set accuracy. This behaviour was improved by the introduction of regularization techniques in Version 2 and Version 3, where the last one reduced a substantial amount of the gap between the training and validation accuracy.
+
+\subsection{Challenges}
+
+One of the major challenges encountered during this study was the overfitting problems. While models initially show quite competitive results on the training set, their performances turned radically bad on both validation and test sets. This demonstrates that efficient methods for regularization and careful tuning of hyperparameters are essential in order to strengthen generalization capability.
+
+Another challenge we overcame had to do with computational power. Initially, we tried running these models on our local computers, but the models were very computationally intensive, making it hard for our machines to handle them effectively, often taking excessively long training times. To mitigate this issue, we resorted to Kaggle, where we could make use of more powerful computation simply by running a notebook and running the models there. It was this transition that helped us overcome the computational limitations quite considerably and proceed with our experiments effectively.
+
+\subsection{Future Iterations}
+
+Future studies can be done in many ways to further refine the results of this work. First, studying more advanced regularization methods may avoid overfitting problems, which frequently occur in baseline CNNs and even in highly complex models like AlexNet. Secondly, ensemble techniques or transfer learning strategies might be able to use effectively the different strengths of the implemented models, including AlexNet, MobileNetV2, and VGG16, and possibly achieve high classification accuracy by combined learning. Lastly, exploring non-CNN models on this dataset could provide insights into alternative approaches to image classification, expanding the scope of model comparison and evaluation.
+
+\printbibliography
+
+\end{document}
